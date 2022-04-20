@@ -13,9 +13,9 @@ import kotlinx.coroutines.tasks.await
 
 class PostDao {
 
-    val db = FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance()
     val postCollections = db.collection("posts")
-    val auth = Firebase.auth
+    private val auth = Firebase.auth
 
     fun addPost(text: String) {
         GlobalScope.launch {
@@ -29,7 +29,7 @@ class PostDao {
         }
     }
 
-    fun getPostById(postId: String): Task<DocumentSnapshot> {
+    private fun getPostById(postId: String): Task<DocumentSnapshot> {
         return postCollections.document(postId).get()
     }
 
@@ -47,6 +47,16 @@ class PostDao {
             postCollections.document(postId).set(post)
         }
 
+    }
+
+    fun deletePost(postId: String) {
+        GlobalScope.launch {
+            val currentUserId = auth.currentUser!!.uid
+            val userDao = UserDao()
+            val post = getPostById(postId).await().toObject(Post::class.java)!!
+
+            postCollections.document(postId).delete()
+        }
     }
 
 }

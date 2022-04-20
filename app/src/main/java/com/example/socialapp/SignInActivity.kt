@@ -1,6 +1,5 @@
 package com.example.socialapp
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -28,8 +27,8 @@ import kotlinx.coroutines.withContext
 
 class SignInActivity : AppCompatActivity() {
 
-    private val RC_SIGN_IN: Int = 123
-    private val TAG = "SignInActivity Tag"
+    private val _rcSignIn: Int = 100
+    private val _tag = "SignInActivity Tag"
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
 
@@ -59,13 +58,13 @@ class SignInActivity : AppCompatActivity() {
 
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        startActivityForResult(signInIntent, _rcSignIn)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == _rcSignIn) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
         }
@@ -75,10 +74,10 @@ class SignInActivity : AppCompatActivity() {
         try {
             val account =
                 completedTask.getResult(ApiException::class.java)!!
-            Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
+            Log.d(_tag, "firebaseAuthWithGoogle:" + account.id)
             firebaseAuthWithGoogle(account.idToken!!)
         } catch (e: ApiException) {
-            Log.w(TAG, "signInResult:failed code=" + e.statusCode)
+            Log.w(_tag, "signInResult:failed code=" + e.statusCode)
 
         }
     }
@@ -99,7 +98,6 @@ class SignInActivity : AppCompatActivity() {
 
     private fun updateUI(firebaseUser: FirebaseUser?) {
         if(firebaseUser != null) {
-
             val user = User(firebaseUser.uid, firebaseUser.displayName, firebaseUser.photoUrl.toString())
             val usersDao = UserDao()
             usersDao.addUser(user)

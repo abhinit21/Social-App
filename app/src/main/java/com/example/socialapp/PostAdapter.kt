@@ -1,10 +1,12 @@
 package com.example.socialapp
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -25,12 +27,17 @@ class PostAdapter(options: FirestoreRecyclerOptions<Post>, val listener: IPostAd
         val likeCount: TextView = itemView.findViewById(R.id.likeCount)
         val userImage: ImageView = itemView.findViewById(R.id.userImage)
         val likeButton: ImageView = itemView.findViewById(R.id.likeButton)
+        val deleteButton: ImageView = itemView.findViewById(R.id.deleteButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val viewHolder =  PostViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_post, parent, false))
         viewHolder.likeButton.setOnClickListener{
             listener.onLikeClicked(snapshots.getSnapshot(viewHolder.adapterPosition).id)
+        }
+        viewHolder.deleteButton.setOnClickListener {
+            Log.d("<DEBUG>", "deleteClicked")
+            listener.onDeleteClicked(snapshots.getSnapshot(viewHolder.adapterPosition).id)
         }
         return viewHolder
     }
@@ -42,7 +49,7 @@ class PostAdapter(options: FirestoreRecyclerOptions<Post>, val listener: IPostAd
         holder.likeCount.text = model.likedBy.size.toString()
         holder.createdAt.text = Utils.getTimeAgo(model.createdAt)
 
-        val auth = Firebase.auth
+        val auth = Firebase.auth 
         val currentUserId = auth.currentUser!!.uid
         val isLiked = model.likedBy.contains(currentUserId)
         if(isLiked) {
@@ -50,10 +57,11 @@ class PostAdapter(options: FirestoreRecyclerOptions<Post>, val listener: IPostAd
         } else {
             holder.likeButton.setImageDrawable(ContextCompat.getDrawable(holder.likeButton.context, R.drawable.ic_unliked))
         }
-
+        holder.deleteButton.setImageDrawable(ContextCompat.getDrawable(holder.deleteButton.context, R.drawable.ic_delete_24))
     }
 }
 
 interface IPostAdapter {
     fun onLikeClicked(postId: String)
+    fun onDeleteClicked(postId: String)
 }

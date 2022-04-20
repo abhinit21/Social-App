@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity(), IPostAdapter {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        
         fab.setOnClickListener{
             val intent = Intent(this, CreatePostActivity::class.java)
             startActivity(intent)
@@ -51,5 +51,9 @@ class MainActivity : AppCompatActivity(), IPostAdapter {
 
     override fun onLikeClicked(postId: String) {
         postDao.updateLikes(postId)
+    }
+
+    override fun onDeleteClicked(postId: String) {
+        postDao.deletePost(postId)
     }
 }

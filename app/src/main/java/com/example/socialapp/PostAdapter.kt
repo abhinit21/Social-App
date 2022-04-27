@@ -26,6 +26,7 @@ class PostAdapter(options: FirestoreRecyclerOptions<Post>, private val listener:
         val userImage: ImageView = itemView.findViewById(R.id.userImage)
         val likeButton: ImageView = itemView.findViewById(R.id.likeButton)
         val deleteButton: ImageView = itemView.findViewById(R.id.deleteButton)
+        val userDateOfBirth: TextView = itemView.findViewById(R.id.userDateOfBirth)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -45,6 +46,7 @@ class PostAdapter(options: FirestoreRecyclerOptions<Post>, private val listener:
         Glide.with(holder.userImage.context).load(model.createdBy.imageUrl).circleCrop().into(holder.userImage)
         holder.likeCount.text = model.likedBy.size.toString()
         holder.createdAt.text = Utils.getTimeAgo(model.createdAt)
+        holder.userDateOfBirth.text = model.date
 
         val auth = Firebase.auth
         val currentUserId = auth.currentUser!!.uid

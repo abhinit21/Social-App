@@ -16,12 +16,10 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-class PostAdapter(options: FirestoreRecyclerOptions<Post>, val listener: IPostAdapter) : FirestoreRecyclerAdapter<Post, PostAdapter.PostViewHolder>(
-    options
-) {
+class PostAdapter(options: FirestoreRecyclerOptions<Post>, private val listener: MainActivity) : FirestoreRecyclerAdapter<Post, PostAdapter.PostViewHolder>(options) {
 
     class PostViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val postText: TextView = itemView.findViewById(R.id.postTitle)
+        val postTitle: TextView = itemView.findViewById(R.id.postTitle)
         val userText: TextView = itemView.findViewById(R.id.userName)
         val createdAt: TextView = itemView.findViewById(R.id.createdAt)
         val likeCount: TextView = itemView.findViewById(R.id.likeCount)
@@ -36,7 +34,6 @@ class PostAdapter(options: FirestoreRecyclerOptions<Post>, val listener: IPostAd
             listener.onLikeClicked(snapshots.getSnapshot(viewHolder.adapterPosition).id)
         }
         viewHolder.deleteButton.setOnClickListener {
-            Log.d("<DEBUG>", "deleteClicked")
             listener.onDeleteClicked(snapshots.getSnapshot(viewHolder.adapterPosition).id)
         }
         return viewHolder
@@ -49,7 +46,7 @@ class PostAdapter(options: FirestoreRecyclerOptions<Post>, val listener: IPostAd
         holder.likeCount.text = model.likedBy.size.toString()
         holder.createdAt.text = Utils.getTimeAgo(model.createdAt)
 
-        val auth = Firebase.auth 
+        val auth = Firebase.auth
         val currentUserId = auth.currentUser!!.uid
         val isLiked = model.likedBy.contains(currentUserId)
         if(isLiked) {
